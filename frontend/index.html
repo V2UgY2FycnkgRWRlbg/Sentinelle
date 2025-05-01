@@ -3,15 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pentest Scanner</title>
+    <title>Sentinelle - Plateforme de Sécurité</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="vuln-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Scanner un site web</h1>
-    <input type="text" id="urlInput" placeholder="Entrez l'URL ici">
-    <button onclick="startScan()">Lancer le scan</button>
-    <p id="status"></p>
-    <pre id="result"></pre>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <div class="flag-logo">
+                    <div class="flag-fr"></div>
+                </div>
+                <div class="text-logo">SENTINELLE</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Tableau de bord</span>
+                    </li>
+                    <li class="nav-item" data-section="scan">
+                        <i class="fas fa-search"></i>
+                        <span>Nouveau scan</span>
+                    </li>
+                    <li class="nav-item" data-section="history">
+                        <i class="fas fa-history"></i>
+                        <span>Historique</span>
+                    </li>
+                    <li class="nav-item" data-section="vulnerabilities">
+                        <i class="fas fa-bug"></i>
+                        <span>Vulnérabilités</span>
+                    </li>
+                    <li class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>© 2025 Sentinelle</p>
+                <p>Version 1.0</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h2 id="section-title">Tableau de bord</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-container">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="content-section active">
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-search"></i>
+                            <div class="stat-info">
+                                <h3>Scans totaux</h3>
+                                <p id="totalScans">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-bug"></i>
+                            <div class="stat-info">
+                                <h3>Vulnérabilités</h3>
+                                <p id="totalVulnerabilities">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-globe"></i>
+                            <div class="stat-info">
+                                <h3>Domaines</h3>
+                                <p id="totalDomains">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-scans">
+                        <h3>Scans récents</h3>
+                        <div class="recent-scans-list" id="recentScansList">
+                            <p class="empty-state">Aucun scan récent</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Scan Section -->
+                <section id="scan" class="content-section">
+                    <div class="scan-container">
+                        <div class="scan-card">
+                            <h3>Lancer un nouveau scan</h3>
+                            <div class="scan-form">
+                                <div class="form-group">
+                                    <label for="urlInput">Domaine cible</label>
+                                    <input type="text" id="urlInput" placeholder="Entrez l'URL ici (ex: example.com)">
+                                </div>
+
+                                <div class="scan-options">
+                                    <button class="btn primary" onclick="startDirectScan()">
+                                        <i class="fas fa-bolt"></i> Scan rapide
+                                    </button>
+                                    <button class="btn secondary" onclick="startSubdomainScan()">
+                                        <i class="fas fa-sitemap"></i> Découvrir les sous-domaines
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="scanProgress" class="scan-progress hidden">
+                            <h3>Progression du scan</h3>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <p id="scanStatus" class="progress-status">En attente...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subdomain Selection -->
+                    <div id="subdomainSelection" class="subdomain-selection hidden">
+                        <h3>Sélection des sous-domaines (max 3)</h3>
+                        <div id="subdomainList" class="subdomain-list"></div>
+                        <p id="selectionCount" class="selection-count">0 sous-domaine(s) sélectionné(s)</p>
+                        <div class="button-group">
+                            <button id="scanSelectedButton" class="btn primary" onclick="startFullScan()" disabled>
+                                <i class="fas fa-play"></i> Scanner les sous-domaines sélectionnés
+                            </button>
+                            <button class="btn secondary" onclick="cancelSubdomainSelection()">
+                                <i class="fas fa-times"></i> Annuler
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History Section -->
+                <section id="history" class="content-section">
+                    <h3>Historique des scans</h3>
+                    <div class="history-filters">
+                        <input type="text" id="historySearch" placeholder="Rechercher un domaine...">
+                        <select id="historyFilter">
+                            <option value="all">Tous</option>
+                            <option value="completed">Terminés</option>
+                            <option value="running">En cours</option>
+                            <option value="error">Erreurs</option>
+                        </select>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <p class="empty-state">Aucun historique disponible</p>
+                    </div>
+                </section>
+
+                <!-- Vulnerabilities Section -->
+                <section id="vulnerabilities" class="content-section">
+                    <h3>Vulnérabilités détectées</h3>
+                    <div class="vuln-filters">
+                        <input type="text" id="vulnSearch" placeholder="Rechercher une vulnérabilité...">
+                        <select id="vulnSeverityFilter">
+                            <option value="all">Toutes sévérités</option>
+                            <option value="critical">Critique</option>
+                            <option value="high">Élevée</option>
+                            <option value="medium">Moyenne</option>
+                            <option value="low">Faible</option>
+                        </select>
+                    </div>
+                    <div class="vuln-list" id="vulnList">
+                        <p class="empty-state">Aucune vulnérabilité détectée</p>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings" class="content-section">
+                    <h3>Paramètres</h3>
+                    <div class="settings-card">
+                        <h4>Apparence</h4>
+                        <div class="setting-item">
+                            <span>Thème sombre</span>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h4>Scan</h4>
+                        <div class="setting-item">
+                            <span>Intervalle de rafraîchissement (secondes)</span>
+                            <input type="number" id="refreshInterval" min="1" max="10" value="3">
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Results Modal -->
+            <div id="resultsModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Résultats du scan</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="results-tabs">
+                            <button class="tab-btn active" data-tab="overview">Aperçu</button>
+                            <button class="tab-btn" data-tab="nmap">Nmap</button>
+                            <button class="tab-btn" data-tab="nuclei">Nuclei</button>
+                            <button class="tab-btn" data-tab="nikto">Nikto</button>
+                        </div>
+                        <div class="tab-content">
+                            <div id="overview" class="tab-pane active">
+                                <div class="overview-stats">
+                                    <div class="overview-card">
+                                        <h4>Ports ouverts</h4>
+                                        <p id="openPorts">-</p>
+                                    </div>
+                                    <div class="overview-card">
+                                        <h4>Vulnérabilités</h4>
+                                        <p id="vulnCount">-</p>
+                                    </div>
+                                    <div class="overview-card">
+                                        <h4>Services</h4>
+                                        <p id="serviceCount">-</p>
+                                    </div>
+                                </div>
+                                <div class="vuln-summary" id="vulnSummary"></div>
+                            </div>
+                            <div id="nmap" class="tab-pane">
+                                <pre id="nmapResult"></pre>
+                            </div>
+                            <div id="nuclei" class="tab-pane">
+                                <pre id="nucleiResult"></pre>
+                            </div>
+                            <div id="nikto" class="tab-pane">
+                                <pre id="niktoResult"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

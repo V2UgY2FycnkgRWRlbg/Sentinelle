@@ -12,6 +12,7 @@ services:
       - nmap_worker
       - nuclei_worker
       - nikto_worker
+      - subfinder_worker
 
   nmap_worker:
     build:
@@ -27,3 +28,8 @@ services:
     build:
       context: ./workers/nikto
     entrypoint: ["nikto"]
+
+  subfinder_worker:
+    build:
+      context: ./workers/subfinder
+    entrypoint: ["subfinder"]

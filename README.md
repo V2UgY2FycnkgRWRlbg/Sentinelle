@@ -1,3 +1,6 @@
+
+Projet scolaire
+
 # Sentinelle - Plateforme de Sécurité Web
 
 Sentinelle est une plateforme de sécurité web qui permet de scanner des domaines pour détecter des vulnérabilités, découvrir des sous-domaines et analyser la configuration des serveurs web.

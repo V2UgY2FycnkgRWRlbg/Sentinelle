@@ -1,43 +1,42 @@
+- school project
 
-Projet scolaire
+# Sentinelle - Web Security Platform
 
-# Sentinelle - Plateforme de Sécurité Web
+Sentinelle is a web security platform that allows you to scan domains to detect vulnerabilities, discover subdomains, and analyze web server configurations.
 
-Sentinelle est une plateforme de sécurité web qui permet de scanner des domaines pour détecter des vulnérabilités, découvrir des sous-domaines et analyser la configuration des serveurs web.
+## Features
 
-## Fonctionnalités
+* Fast domain scanning
+* Subdomain discovery
+* Vulnerability detection with Nuclei
+* Configuration analysis with Nikto
+* Port scanning with Nmap
+* Modern interface with dark mode
+* Tracking of detected vulnerabilities
+* Scan history
 
-- Scan rapide de domaines
-- Découverte de sous-domaines
-- Détection de vulnérabilités avec Nuclei
-- Analyse de configuration avec Nikto
-- Scan de ports avec Nmap
-- Interface moderne avec mode sombre
-- Suivi des vulnérabilités détectées
-- Historique des scans
+## Requirements
 
-## Prérequis
-
-- Docker et Docker Compose
-- Python 3.8+
-- Navigateur web moderne
+* Docker and Docker Compose
+* Python 3.8+
+* Modern web browser
 
 ## Installation
 
-### 1. Cloner le dépôt
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/votre-utilisateur/sentinelle.git
+git clone https://github.com/your-user/sentinelle.git
 cd sentinelle
 ```
 
-### 2. Construire les images Docker
+### 2. Build the Docker images
 
 ```bash
-# Construire l'image du backend
+# Build the backend image
 docker-compose build backend
 
-# Construire les images des workers
+# Build the worker images
 cd workers/nuclei
 docker build -t sentinelle-nuclei_worker .
 cd ../nmap
@@ -49,189 +48,196 @@ docker build -t sentinelle-subfinder_worker .
 cd ../..
 ```
 
-## Démarrage
+## Startup
 
-### 1. Lancer les conteneurs Docker
+### 1. Start the Docker containers
 
 ```bash
-# Démarrer tous les conteneurs Docker nécessaires
+# Start all required Docker containers
 docker-compose up -d
 
-# Vérifier que tous les conteneurs sont en cours d'exécution
+# Check that all containers are running
 docker-compose ps
 ```
 
-Si vous préférez démarrer les services individuellement :
+If you prefer to start the services individually:
 
 ```bash
-# Démarrer uniquement le backend
+# Start only the backend
 docker-compose up -d backend
 
-# Démarrer ou redémarrer un conteneur spécifique
+# Start or restart a specific container
 docker restart sentinelle-backend-1
 ```
 
-### 2. Lancer le frontend
+### 2. Start the frontend
 
 ```bash
-# Démarrer un serveur HTTP simple pour le frontend
+# Start a simple HTTP server for the frontend
 cd frontend
 python3 -m http.server 8080
 ```
 
-### 3. Accéder à l'application
+### 3. Access the application
 
-Ouvrez votre navigateur et accédez à l'URL suivante :
+Open your browser and go to:
+
 ```
 http://localhost:8080
 ```
 
-## Utilisation
+## Usage
 
-### Scanner un domaine
+### Scan a domain
 
-1. Accédez à l'onglet "Nouveau scan"
-2. Entrez le domaine cible (ex: example.com)
-3. Choisissez entre un scan direct ou une découverte de sous-domaines
-4. Si vous choisissez la découverte de sous-domaines, sélectionnez jusqu'à 3 sous-domaines à scanner
-5. Attendez que le scan se termine
-6. Consultez les résultats dans la fenêtre modale
+1. Go to the "New Scan" tab
+2. Enter the target domain (e.g., example.com)
+3. Choose between a direct scan or subdomain discovery
+4. If you choose subdomain discovery, select up to 3 subdomains to scan
+5. Wait for the scan to finish
+6. View the results in the modal window
 
-### Consulter les vulnérabilités
+### View vulnerabilities
 
-1. Accédez à l'onglet "Vulnérabilités"
-2. Parcourez les vulnérabilités détectées, classées par sévérité
-3. Utilisez les filtres pour affiner votre recherche
+1. Go to the "Vulnerabilities" tab
+2. Browse the detected vulnerabilities, sorted by severity
+3. Use filters to refine your search
 
-### Consulter l'historique
+### View the scan history
 
-1. Accédez à l'onglet "Historique"
-2. Consultez les scans précédents
-3. Cliquez sur "Voir les résultats" pour afficher les détails d'un scan
+1. Go to the "History" tab
+2. View previous scans
+3. Click "View results" to display scan details
 
 ## Architecture
 
-Le projet est composé de plusieurs composants :
+The project is composed of several components:
 
-- **Frontend** : Interface utilisateur en HTML/CSS/JavaScript
-- **Backend** : API FastAPI qui orchestre les scans
-- **Workers** : Conteneurs Docker spécialisés pour chaque outil de scan
-  - Nuclei : Détection de vulnérabilités
-  - Nmap : Scan de ports
-  - Nikto : Analyse de configuration web
-  - Subfinder : Découverte de sous-domaines
+* **Frontend**: HTML/CSS/JavaScript user interface
+* **Backend**: FastAPI API that orchestrates scans
+* **Workers**: Docker containers specialized for each scanning tool
 
-## Structure du projet
+  * Nuclei: Vulnerability detection
+  * Nmap: Port scanning
+  * Nikto: Web configuration analysis
+  * Subfinder: Subdomain discovery
+
+## Project structure
 
 ```
 sentinelle/
-├── backend/                # Code du backend FastAPI
-│   ├── main.py            # Point d'entrée de l'API
-│   └── utils.py           # Fonctions utilitaires pour les scans
-├── frontend/               # Interface utilisateur
-│   ├── index.html         # Page principale
-│   ├── style.css          # Styles CSS principaux
-│   ├── vuln-styles.css    # Styles pour les vulnérabilités
-│   └── script.js          # Code JavaScript
-├── workers/                # Conteneurs Docker pour les outils
-│   ├── nmap/              # Worker pour Nmap
+├── backend/                # FastAPI backend code
+│   ├── main.py            # API entry point
+│   └── utils.py           # Utility functions for scans
+├── frontend/               # User interface
+│   ├── index.html         # Main page
+│   ├── style.css          # Main CSS styles
+│   ├── vuln-styles.css    # Vulnerability-related styles
+│   └── script.js          # JavaScript code
+├── workers/                # Docker containers for scanning tools
+│   ├── nmap/              # Worker for Nmap
 │   │   └── Dockerfile
-│   ├── nuclei/            # Worker pour Nuclei
+│   ├── nuclei/            # Worker for Nuclei
 │   │   ├── Dockerfile
 │   │   └── wrapper.sh
-│   ├── nikto/             # Worker pour Nikto
+│   ├── nikto/             # Worker for Nikto
 │   │   └── Dockerfile
-│   └── subfinder/         # Worker pour Subfinder
+│   └── subfinder/         # Worker for Subfinder
 │       └── Dockerfile
-├── docker-compose.yml      # Configuration Docker Compose
-└── README.md               # Documentation du projet
+├── docker-compose.yml      # Docker Compose configuration
+└── README.md               # Project documentation
 ```
 
-## Gestion des conteneurs Docker
+## Managing Docker containers
 
-### Vérifier l'état des conteneurs
+### Check container status
 
 ```bash
-# Afficher tous les conteneurs en cours d'exécution
+# Show all running containers
 docker ps
 
-# Afficher tous les conteneurs (y compris ceux arrêtés)
+# Show all containers (including stopped ones)
 docker ps -a
 ```
 
-### Gérer les conteneurs
+### Manage containers
 
 ```bash
-# Arrêter tous les conteneurs
+# Stop all containers
 docker-compose down
 
-# Redémarrer un conteneur spécifique
+# Restart a specific container
 docker restart sentinelle-backend-1
 
-# Voir les logs d'un conteneur en temps réel
+# View container logs in real time
 docker logs -f sentinelle-backend-1
 ```
 
-### Reconstruire les images après modification
+### Rebuild images after modifications
 
-Si vous modifiez le code du backend ou des workers, vous devrez reconstruire les images :
+If you modify the backend or worker code, you will need to rebuild the images:
 
 ```bash
-# Reconstruire l'image du backend
+# Rebuild the backend image
 docker-compose build backend
 
-# Reconstruire une image worker spécifique
+# Rebuild a specific worker image
 cd workers/nuclei
 docker build -t sentinelle-nuclei_worker .
 ```
 
-## Dépannage
+## Troubleshooting
 
-### Le backend ne démarre pas
+### Backend does not start
 
-Vérifiez les logs Docker :
+Check the Docker logs:
+
 ```bash
 docker-compose logs backend
 ```
 
-### Les scans échouent
+### Scans fail
 
-Vérifiez que les images Docker des workers sont correctement construites :
+Check that the worker Docker images are correctly built:
+
 ```bash
 docker images | grep sentinelle
 ```
 
-### Problèmes de connexion au backend
+### Connection issues with the backend
 
-Vérifiez que le backend est accessible :
+Verify that the backend is accessible:
+
 ```bash
 curl http://localhost:8000
 ```
 
-### Problèmes avec les workers
+### Issues with workers
 
-Vérifiez que vous pouvez exécuter les workers manuellement :
+Check that you can run workers manually:
+
 ```bash
-# Tester le worker Nuclei
+# Test the Nuclei worker
 docker run --rm sentinelle-nuclei_worker -u https://example.com -no-color
 
-# Tester le worker Nmap
+# Test the Nmap worker
 docker run --rm sentinelle-nmap_worker example.com
 ```
 
-## Personnalisation
+## Customization
 
-### Changer le port du frontend
+### Change the frontend port
 
-Modifiez la commande de démarrage du serveur HTTP :
+Modify the HTTP server startup command:
+
 ```bash
 python3 -m http.server <port>
 ```
 
-### Changer le port du backend
+### Change the backend port
 
-Modifiez le fichier `docker-compose.yml` et changez le port exposé pour le service backend.
+Edit the `docker-compose.yml` file and change the exposed port for the backend service.
 
 ## Licence
 
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+This project is under MIT License

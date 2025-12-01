@@ -1,8 +1,8 @@
 - school project
 
-# Sentinelle - Web Security Platform
+# Sentinel - Web Security Platform
 
-Sentinelle is a web security platform that allows you to scan domains to detect vulnerabilities, discover subdomains, and analyze web server configurations.
+Sentinel is a web security platform that allows you to scan domains to detect vulnerabilities, discover subdomains, and analyze web server configurations.
 
 ## Features
 
